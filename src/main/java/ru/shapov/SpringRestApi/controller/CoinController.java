@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.shapov.SpringRestApi.model.Coin;
+import ru.shapov.SpringRestApi.repository.CoinJDBSRepository;
 import ru.shapov.SpringRestApi.repository.CoinRepository;
 
 import java.util.List;
@@ -11,10 +12,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/coins")
 public class CoinController {
-    private final CoinRepository repository;
+    //private final CoinRepository repository;
+    private final CoinJDBSRepository repository;
 
     @Autowired
-    public CoinController(CoinRepository repository) {
+    //public CoinController(CoinRepository repository) { this.repository = repository; }
+    public CoinController(CoinJDBSRepository repository) {
         this.repository = repository;
     }
 
@@ -26,12 +29,20 @@ public class CoinController {
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Coin> getCoinById(@PathVariable Long id) {
-        return repository.findById(id)
+        Coin coin = repository.findById(id);
+        return new ResponseEntity<>(coin, HttpStatus.OK);
+        /*return repository.findById(id)
                 .map(coin -> new ResponseEntity<>(coin, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));*/
     }
 
-    @PostMapping("/add")
+    @GetMapping("/get-by-country-id/{id}")
+    public ResponseEntity<List<Coin>> getAllCoinsByCountryId(@PathVariable Long id) {
+        List<Coin> coins = (List<Coin>) repository.findAllCountryId(id);
+        return new ResponseEntity<>(coins, HttpStatus.OK);
+    }
+
+    /*@PostMapping("/add")
     public ResponseEntity<Coin> createCoin(@RequestBody Coin coin) {
         Coin createCoin = repository.save(coin);
         return new ResponseEntity<>(createCoin, HttpStatus.CREATED);
@@ -61,5 +72,5 @@ public class CoinController {
                     return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
                 })
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+    }*/
 }
