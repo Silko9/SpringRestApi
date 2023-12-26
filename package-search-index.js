@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.shapov.SpringRestApi"},{"l":"ru.shapov.SpringRestApi.controller"},{"l":"ru.shapov.SpringRestApi.model"},{"l":"ru.shapov.SpringRestApi.repository"}];updateSearchResults();

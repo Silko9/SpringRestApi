@@ -8,22 +8,46 @@ import ru.shapov.SpringRestApi.repository.CoinRepository;
 
 import java.util.List;
 
+/**
+ * Контроллер монет
+ * <p>
+ * Контроллер содержит в себе энд-поинты для взаимодйствия с монетами через API сервера.
+ * Корневой маршрут для всех энд-поинтов /coins
+ *
+ * @author ShapovAA
+ */
 @RestController
 @RequestMapping("/coins")
 public class CoinController {
+    /**
+     * Репозиторий монет
+     */
     private final CoinRepository repository;
 
+    /**
+     * Конструктор для контроллера. Вызывается посредством spring, подставляя все необходимые зависимости через @Autowired
+     * @param repository репозиторий монет
+     */
     @Autowired
     public CoinController(CoinRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Метод получение всех монет через энд поинт /get-all
+     * @return лист монет
+     */
     @GetMapping("/get-all")
     public ResponseEntity<List<Coin>> getAllCoins() {
         List<Coin> coins = (List<Coin>) repository.findAll();
         return new ResponseEntity<>(coins, HttpStatus.OK);
     }
 
+    /**
+     * Метод получения монеты по уникальному идентификатору через энд-поинт /get/{id}
+     * @param id уникальный идентификатор монеты
+     * @return сущность монеты
+     */
     @GetMapping("/get/{id}")
     public ResponseEntity<Coin> getCoinById(@PathVariable Long id) {
         return repository.findById(id)
@@ -31,12 +55,23 @@ public class CoinController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Метод добавление монеты в БД, через энд-поинт /add
+     * @param coin сущность монеты, должен содержаться в теле запроса
+     * @return сущность созданной монеты
+     */
     @PostMapping("/add")
     public ResponseEntity<Coin> createCoin(@RequestBody Coin coin) {
         Coin createCoin = repository.save(coin);
         return new ResponseEntity<>(createCoin, HttpStatus.CREATED);
     }
 
+    /**
+     * Метод изменение сущности монеты в БД, через энд-поинт /edit{id}
+     * @param id уникальный идентификатор монеты
+     * @param updateCoin сущность изменненой монеты
+     * @return сущность монеты после изменений
+     */
     @PutMapping("/edit/{id}")
     public ResponseEntity<Coin> updateCoin(@PathVariable Long id, @RequestBody Coin updateCoin) {
         return repository.findById(id)
@@ -53,6 +88,11 @@ public class CoinController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Метод удаление сущности монеты из БД, через энд-поинт /delete/{id}
+     * @param id уникальный идентификатор монеты
+     * @return сущность со статусом запроса
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCoin(@PathVariable Long id) {
         return repository.findById(id)
